@@ -16,9 +16,11 @@ size of the output for the model
 
 # Methods
 `_prepare_data()`
+
 Prepares the data for training by creating several derived columns and setting up the time series data structures.
 
 `train(pred_length=-1, epochs=1500, lr=1e-4, batch_size=1024, patience=20, min_delta=0.005, use_gpu=None, verbose=True)`
+
 Trains the N-BEATS model using the prepared data.
 
 1. `pred_length`: int, optional,  default=`-1`
@@ -39,12 +41,15 @@ default is None which uses CPU, an integers sets the number of GPUs to be used, 
 whether to print verbose training messages
 
 `predictions()`
+
 Returns the predictions after `target_time` as a pandas DataFrame.
 
 `backtest()`
+
 Backtests the model using historical data. Computationally intensive.
 
 `plot_predictions(self, title="Prediction Plot", l_obs='Observed', l_pred='Predicted')`:
+
 Plots the predictions along with the true values.
 1. `title`: str, optional, default=`"Prediction Plot"`
 title of the plot
@@ -54,6 +59,7 @@ label for observed data
 label for predicted data
 
 `plot_backtest(self, title="Backcast Plot", l_obs='Observed', l_pred='Predicted')`
+
 Plots the backtests along with the true values.
 1. `title`: str, optional, default=`"Backtest Plot"`
 title of the plot
@@ -63,6 +69,7 @@ label for observed data
 label for predicted data
 
 `plot_gap(self, l='Observed - Predicted', title="Gap Plot")`
+
 Plots the gap between the true values and the predictions.
 1. `title`: str, optional, default=`"Gap Plot"`
 title of the plot
@@ -70,12 +77,15 @@ title of the plot
 label for the gap values
 
 `average_treatment_effect()`
+
 Calculates and returns the average treatment effect.
 
 `std_treatment_effect()`
+
 Calculates and returns the standard deviation of the treatment effect.
 
 `placebo_test(control_ids=None, use_gpu=None, plot=True)`
+
 Performs a placebo test using control groups, and returns a dictionary for the predictions for each contrl ID and a float for p-value of the placebo test.
 1. `control_ids`: list[int] or `None`, optional, default=`None`
 list of control IDs for the placebo test,  default is None which uses all non-treatment IDs
