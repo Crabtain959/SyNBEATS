@@ -53,7 +53,7 @@ label for observed data
 3. `l_pred`: str, optional, default=`"Predicted"`
 label for predicted data
 
-`plot_backtest(self, title="Backcast Plot", l_obs='Observed', l_pred='Predicted')
+`plot_backtest(self, title="Backcast Plot", l_obs='Observed', l_pred='Predicted')`
 Plots the backtests along with the true values.
 1. `title`: str, optional, default=`"Backtest Plot"`
 title of the plot
