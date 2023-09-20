@@ -4,7 +4,15 @@
 This repo includes a [Python implementation](./SyNBEATS.py) of the SyNBEATS algorithm presented in this [paper](https://arxiv.org/abs/2208.03489). It also includes an [example usage notebook](./example_usage) and the [dataset](./smoking_data) used in it. 
 
 ## Installation
-Download the [synbeats.py](./SyNBEATS.py) and put it inside your working directory. Then add `from synbeats import *` to your script. 
+Download the [synbeats.py](./SyNBEATS.py) and the [requirements.txt](./requirements.txt) and put it inside your working directory. \
+Next run the following command to install the dependencies.
+```bash
+pip install -r requirements.txt
+```
+Then add the following line to your script to import the code. 
+```python
+from synbeats import *
+```
 
 
 ## Example
