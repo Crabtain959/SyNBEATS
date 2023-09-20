@@ -23,6 +23,10 @@ model.train(use_gpu=1)
 model.plot_predictions()
 model.plot_gap()
 
+# Calculate the average treatment effect and the standard deviation of the treatment effects
+ate = model.average_treatment_effect()
+std = model.std_treatment_effect()
+
 # Placebo Test
 placebo_predictions, p_value = model.placebo_test(control_ids=[i for i in range(4,15)], use_gpu=1)
 ```
