@@ -6,7 +6,31 @@ This repo includes a [Python implementation](./SyNBEATS.py) of the SyNBEATS algo
 ## Installation
 Download the [synbeats.py](./SyNBEATS.py) and put it inside your working directory. Then add `from synbeats import *` to your script. 
 
-## Class
+
+## Example
+
+```python
+# Read the data into dta
+
+# Import the class
+from SyNBEATS import *
+
+# Build and train the model
+model = SyNBEATS(dta, [3], 1989)
+model.train(use_gpu=1)
+
+# Plot the predictions and the gap
+model.plot_predictions()
+model.plot_gap()
+
+# Placebo Test
+placebo_predictions, p_value = model.placebo_test(control_ids=[i for i in range(4,15)], use_gpu=1)
+```
+**See more in [example_usage.ipynb](./example_usage.ipynb)**
+
+## Detailed Documentation
+
+### Class
 ```python
 class SyNBEATS(dta, treat_ids, target_time, date_format=None, input_size=1, output_size=1)
 ```
@@ -24,7 +48,7 @@ Size of the input for the model
 6. **`output_size`**: integer, optional, default=`1`\
 Size of the output for the model
 
-## Methods
+### Methods
 ```python
 train(pred_length=-1, epochs=1500, lr=1e-4, batch_size=1024, patience=20, min_delta=0.005, use_gpu=None, verbose=True)
 ```
@@ -149,9 +173,6 @@ Whether to plot the predictions for the control IDs
 <p align="center">
   <img src="https://github.com/Crabtain959/SyNBEATS/blob/f4923a163145e424f8152ce6e67793c88e48f0dc/plots/placebo.png">
 </p>
-
-## Example
-**See [example_usage.ipynb](./example_usage.ipynb)**
 
 ## Acknowledgements
 
