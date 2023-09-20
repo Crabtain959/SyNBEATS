@@ -7,7 +7,7 @@ A Python implementation of the SyNBEATS algorithm presented in this [paper](http
 Download the `synbeats.py` and put it inside your working directory. Then add `from synbeats import *` to your script. 
 
 ## Class
-`class SyNBEATS(dta, treat_ids, target_time, date_format=None, input_size=1, output_size=1)`
+```{python}class SyNBEATS(dta, treat_ids, target_time, date_format=None, input_size=1, output_size=1)```
 
 1. `dta`: DataFrame
 input data with columns `['id', 'time', 'Y_obs']`. The values in 'time' column should be either in time format or evenly-spaced integers
@@ -103,7 +103,7 @@ default is None which uses CPU, an integers sets the number of GPUs to be used, 
 whether to plot the predictions for the control IDs
 
 ## Example
-**See [example_usage.ipynb](example_usage.ipynb)**
+**See [example_usage.ipynb](https://github.com/Crabtain959/SyNBEATS/blob/main/example_usage.ipynb)**
 
 ## Acknowledgements
 
