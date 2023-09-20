@@ -1,4 +1,12 @@
-# Class
+<h1 align="center">SyNBEATS</h1>
+
+## Description
+A Python implementation of the SyNBEATS algorithm presented in this [paper](https://arxiv.org/abs/2208.03489). 
+
+## Installation
+Download the `synbeats.py` and put it inside your working directory. Then add `from synbeats import *` to your script. 
+
+## Class
 `class SyNBEATS(dta, treat_ids, target_time, date_format=None, input_size=1, output_size=1)`
 
 1. `dta`: DataFrame
