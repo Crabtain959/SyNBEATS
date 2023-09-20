@@ -22,7 +22,7 @@ size of the input for the model
 6. `output_size`: int, optional, default=`1`
 size of the output for the model
 
-# Methods
+## Methods
 `_prepare_data()`
 
 Prepares the data for training by creating several derived columns and setting up the time series data structures.
@@ -102,9 +102,9 @@ default is None which uses CPU, an integers sets the number of GPUs to be used, 
 3. `plot`: bool, optional, default=`True`
 whether to plot the predictions for the control IDs
 
-# Example
-**See example_usage.ipynb**
+## Example
+**See [example_usage.ipynb](example_usage.ipynb)**
 
-# Acknowledgements
+## Acknowledgements
 
 This project is based on [Darts](https://github.com/unit8co/darts), which is licensed under the [Apache License 2.0](https://github.com/unit8co/darts/blob/develop/LICENSE). We are grateful to the creators and contributors of Darts for their work.
