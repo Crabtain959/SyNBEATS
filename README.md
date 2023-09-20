@@ -15,7 +15,7 @@ from synbeats import *
 ```
 
 
-## Example
+## Example Usage
 
 ```python
 # Read the data into dta
