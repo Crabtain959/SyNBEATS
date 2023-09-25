@@ -1,8 +1,8 @@
 <h1 align="center">SyNBEATS</h1>
 
 ## Description
-This repo includes a [Python implementation](./SyNBEATS.py) of the SyNBEATS algorithm presented in this [paper](https://arxiv.org/abs/2208.03489). It also includes an [example usage notebook](./example_usage) and the [dataset](./smoking_data) used in it. 
-
+This repo includes a [Python implementation](./SyNBEATS.py) of the SyNBEATS algorithm presented in the paper: [Forecasting Algorithms for Causal Inference with Panel Data
+](https://arxiv.org/abs/2208.03489). It also includes an [example usage notebook](./example_usage.ipynb) and the [dataset](./smoking_data.csv) used in it. The dataset originally comes from the paper [Adadie et al.](https://web.stanford.edu/~jhain/Paper/JASA2010.pdf)
 ## Installation
 Download the [SyNBEATS.py](./SyNBEATS.py) and the [requirements.txt](./requirements.txt) and put it inside your working directory. \
 Next run the following command to install the dependencies.
