@@ -49,47 +49,55 @@ class SyNBEATS(dta, treat_ids, target_time, date_format=None, input_size=1, outp
 **_Parameters_**:
 1. **`dta`**: Pandas DataFrame\
 Input data with columns `['id', 'time', 'Y_obs']`. The values in 'time' column should be either in time format or evenly-spaced integers
-2. **`treat_ids`**: list of integers\
+2. **`treat_ids`**: list\
 List of IDs of treated units
 3. **`target_time`**: integer\
 Target time for the treatment
-4. **`date_format`**: string, optional, default=`None`\
+4. **`control_ids`**: list\
+List of IDs of control units
+5. **`date_format`**: string, optional, default=`None`\
 Format of the date in the 'time' column. `None` for integer values
-5. **`input_size`**: integer, optional, default=`1`\
+6. **`input_size`**: integer, optional, default=`1`\
 Size of the input for the model
-6. **`output_size`**: integer, optional, default=`1`\
+7. **`output_size`**: integer, optional, default=`1`\
 Size of the output for the model
 
 ### Methods
 ```python
-train(pred_length=-1, epochs=1500, lr=1e-4, batch_size=1024, patience=20, min_delta=0.005, use_gpu=None, verbose=True)
+train(epochs=1500, lr=1e-4, batch_size=1024, patience=20, min_delta=0.005, use_gpu=None, verbose=True)
 ```
 Trains the N-BEATS model using the prepared data.
 
 **_Parameters_**:
-1. **`pred_length`**: int, optional,  default=`-1`\
-Prediction length, default is `-1` which calculates all the way back to **`target_time`**
-2. **`epochs`**: int, optional, default=`1500`\
+1. **`epochs`**: int, optional, default=`1500`\
 Number of training epochs
-3. **`lr`**: float, optional, default=`1e-4`\
+2. **`lr`**: float, optional, default=`1e-4`\
 Learning rate,
-4. **`batch_size`**: int, optional, default=`1024`\
+3. **`batch_size`**: int, optional, default=`1024`\
 Training batch size
-5. **`patience`**: int, optional, default=`20`\
+4. **`patience`**: int, optional, default=`20`\
 Patience for early stopping
-6. **`min_delta`**: float, optional, default=`0.005`\
+5. **`min_delta`**: float, optional, default=`0.005`\
 Minimum delta for early stopping
-7. **`use_gpu`**: int, None, or a list of ints, optional, default=`'None'`\
+6. **`use_gpu`**: int, None, or a list of ints, optional, default=`'None'`\
 Default is None which uses CPU, an integers sets the number of GPUs to be used, and a list of integers sets the indices of specific GPUs to be used
-8. **`verbose`**: bool, optional, default=`True`\
+7. **`verbose`**: bool, optional, default=`True`\
 Whether to print verbose training messages
 
 ---
 
 ```python
-predictions()
+predictions(pred_length=-1, df=False, verbose=True)
 ```
-Returns the predictions after **`target_time`** as a pandas DataFrame.
+Returns the predictions after **`target_time`**
+
+**_Parameters_**:
+1. **`pred_length`**: int, optional,  default=`-1`\
+Prediction length, default is `-1` which calculates all the way back to **`target_time`**
+2. **`df`**: boolean, optional, default=`False`\
+Whether to return the predictions as a Pandas DataFrame. Default is `False` which returns a Darts TimeSeries instead. 
+3. **`verbose`**: bool, optional, default=`True`\
+Whether to print verbose training messages
 
 ---
 
@@ -101,16 +109,18 @@ Backtests the model using historical data. Computationally intensive.
 ---
 
 ```python
-plot_predictions(self, title="Prediction Plot", l_obs='Observed', l_pred='Predicted')
+plot_predictions(self, predictions, title="Prediction Plot", l_obs='Observed', l_pred='Predicted')
 ```
 Plots the predictions along with the true values.
 
 **_Parameters_**:
-1. **`title`**: str, optional, default=`"Prediction Plot"`\
+1. **`predictions`**: Darts TimeSeries
+The predictions of the model
+2. **`title`**: str, optional, default=`"Prediction Plot"`\
 Title of the plot
-2. **`l_obs`**: str, optional, default=`"Observed"`\
+3. **`l_obs`**: str, optional, default=`"Observed"`\
 Label for observed data
-3. **`l_pred`**: str, optional, default=`"Predicted"`\
+4. **`l_pred`**: str, optional, default=`"Predicted"`\
 Label for predicted data
 
 **_Example Plot_**:
