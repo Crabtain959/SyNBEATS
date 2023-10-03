@@ -28,7 +28,8 @@ model = SyNBEATS(dta, [3], 1989)
 model.train(use_gpu=1)
 
 # Plot the predictions and the gap
-model.plot_predictions()
+predictions = model.predictions()
+model.plot_predictions(predictions)
 model.plot_gap()
 
 # Calculate the average treatment effect and the standard deviation of the treatment effects
@@ -44,7 +45,7 @@ placebo_predictions, p_value = model.placebo_test(control_ids=[i for i in range(
 
 ### Class
 ```python
-class SyNBEATS(dta, treat_ids, target_time, date_format=None, input_size=1, output_size=1)
+class SyNBEATS(dta, treat_ids, target_time, control_ids=None, date_format=None, input_size=1, output_size=1)
 ```
 **_Parameters_**:
 1. **`dta`**: Pandas DataFrame\
@@ -53,8 +54,8 @@ Input data with columns `['id', 'time', 'Y_obs']`. The values in 'time' column s
 List of IDs of treated units
 3. **`target_time`**: integer\
 Target time for the treatment
-4. **`control_ids`**: list\
-List of IDs of control units
+4. **`control_ids`**: list, optional, default=`None`\
+List of IDs of control units. Default is `None` which uses all the other units as control units
 5. **`date_format`**: string, optional, default=`None`\
 Format of the date in the 'time' column. `None` for integer values
 6. **`input_size`**: integer, optional, default=`1`\
@@ -89,7 +90,7 @@ Whether to print verbose training messages
 ```python
 predictions(pred_length=-1, df=False, verbose=True)
 ```
-Returns the predictions after **`target_time`**
+Returns the predictions after **`target_time`**.
 
 **_Parameters_**:
 1. **`pred_length`**: int, optional,  default=`-1`\
@@ -102,16 +103,9 @@ Whether to print verbose training messages
 ---
 
 ```python
-backtest()
-```
-Backtests the model using historical data. Computationally intensive.
-
----
-
-```python
 plot_predictions(self, predictions, title="Prediction Plot", l_obs='Observed', l_pred='Predicted')
 ```
-Plots the predictions along with the true values.
+Plots the predictions along with the true values. If the model is fitted on multiple units, it plots the mean of the predictions of all treated units along with the mean of the true values of them.
 
 **_Parameters_**:
 1. **`predictions`**: Darts TimeSeries
@@ -127,6 +121,13 @@ Label for predicted data
 <p align="center">
   <img src="https://github.com/Crabtain959/SyNBEATS/blob/f4923a163145e424f8152ce6e67793c88e48f0dc/plots/predictions.png">
 </p>
+
+---
+
+```python
+backtest()
+```
+Backtests the model using historical data. Computationally intensive.
 
 ---
 
@@ -148,7 +149,7 @@ Label for predicted data
 ```python
 plot_gap(self, l='Observed - Predicted', title="Gap Plot")
 ```
-Plots the gap between the true values and the predictions.
+Plots the gap between the true values and the predictions. If the model is fitted on multiple treated units, it plots the mean of the gaps of all the treated units.
 
 **_Parameters_**:
 1. **`title`**: str, optional, default=`"Gap Plot"`\
@@ -181,7 +182,7 @@ Calculates and returns the standard deviation of the treatment effect.
 ```python
 placebo_test(control_ids=None, use_gpu=None, plot=True)
 ```
-Performs a placebo test using control groups, and returns a dictionary for the predictions for each contrl ID and a float for p-value of the placebo test.
+Performs a placebo test using control groups, and returns a dictionary for the predictions for each contrl ID and a float for p-value of the placebo test. Multiple treated unit placebo test is not supported because it invloves too much intensive computation.
 
 **_Parameters_**:
 1. **`control_ids`**: list[int] or `None`, optional, default=`None`\
