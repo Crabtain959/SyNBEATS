@@ -63,6 +63,23 @@ Size of the input for the model
 7. **`output_size`**: integer, optional, default=`1`\
 Size of the output for the model
 
+### Attributes
+| **Name**      | **Description**                                                                                                          |
+|---------------|--------------------------------------------------------------------------------------------------------------------------|
+| date_format   | Format of the date in the 'time' column                                                                                  |
+| dta           | input data                                                                                                               |
+| treat_ids     | List of IDs of treated units                                                                                             |
+| control_ids   | List of IDs of control units                                                                                             |
+| target_time   | Target time for the treatment                                                                                            |
+| input_size    | Size of the input for the model                                                                                          |
+| output_size   | Size of the output for the model                                                                                         |
+| ts_list_all   | Data corresponds to the treated units of all time                                                                        |
+| ts_list_test  | Data corresponds to the treated units since target time                                                                  |
+| ts_list_train | Data corresponds to the treated units before target time                                                                 |
+| cov_list_all  | Data corresponds to the control units of all time                                                                        |
+| model         | The trained model (initialized after calling `train()`)                                                                  |
+| backtest      | Predictions that the model would have produced on the entire series without retrain  (initialized after calling `train`) |
+
 ### Methods
 ```python
 train(epochs=1500, lr=1e-4, batch_size=1024, patience=20, min_delta=0.005, use_gpu=None, verbose=True)
