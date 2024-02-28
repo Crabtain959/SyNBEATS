@@ -127,16 +127,22 @@ Plots the predictions along with the true values. If the model is fitted on mult
 **_Parameters_**:
 1. **`predictions`**: Darts TimeSeries
 The predictions of the model
-2. **`title`**: str, optional, default=`"Prediction Plot"`\
+2. **`predict_pretreatment`**: boolean, optional, default=`"False"`\
+Wether to plot the pre-treatment predictions. If not (set to `"False"`), only post-treatment predictions will be plotted.
+4. **`title`**: str, optional, default=`"Prediction Plot"`\
 Title of the plot
-3. **`l_obs`**: str, optional, default=`"Observed"`\
+5. **`l_obs`**: str, optional, default=`"Observed"`\
 Label for observed data
-4. **`l_pred`**: str, optional, default=`"Predicted"`\
+6. **`l_pred`**: str, optional, default=`"Predicted"`\
 Label for predicted data
 
 **_Example Plot_**:
 <p align="center">
-  <img src="https://github.com/Crabtain959/SyNBEATS/blob/f4923a163145e424f8152ce6e67793c88e48f0dc/plots/predictions.png">
+  <img src="./plots/predictions_without_pre.png">
+</p>
+
+<p align="center">
+  <img src="./plots/predictions_with_pre.png">
 </p>
 
 ---
@@ -177,7 +183,7 @@ Label for the gap values
 **_Example plot_**:
 
 <p align="center">
-  <img src="https://github.com/Crabtain959/SyNBEATS/blob/f4923a163145e424f8152ce6e67793c88e48f0dc/plots/gap.png">
+  <img src="./plots/gap.png">
 </p>
 
 ---
@@ -211,7 +217,7 @@ Whether to plot the predictions for the control IDs
 
 **_Example Plot_**:
 <p align="center">
-  <img src="https://github.com/Crabtain959/SyNBEATS/blob/f4923a163145e424f8152ce6e67793c88e48f0dc/plots/placebo.png">
+  <img src="./plots/placebo.png">
 </p>
 
 ## Acknowledgements
