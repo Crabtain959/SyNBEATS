@@ -8,6 +8,10 @@ import logging
 import numpy as np
 from tqdm import tqdm
 from scipy.stats import norm
+import warnings
+# from pytorch_lightning.utilities.exceptions import PossibleUserWarning
+
+warnings.filterwarnings("ignore", category=UserWarning)
 
 logging.getLogger("pytorch_lightning.utilities.rank_zero").setLevel(logging.WARNING)
 logging.getLogger("pytorch_lightning.accelerators.cuda").setLevel(logging.WARNING)
@@ -22,14 +26,18 @@ class SyNBEATS:
         input_size=1, output_size=1,
         ):
         
+        assert len(dta['time'])>1, "Time span has to be at least 2 unit time long"
+        
+        self.dta = dta
+        self.treat_ids = treat_ids
+        
         self.date_format = date_format
         if self.date_format:
             target_time = pd.to_datetime(target_time, format=self.date_format)
             self.dta["time"] = pd.to_datetime(self.dta["time"], format=self.date_format)
-            
-        self.dta = dta
-        self.treat_ids = treat_ids
-        
+                
+        self._step_size = self.dta['time'][1]-self.dta['time'][0]
+        # print(self._step_size)
         if control_ids:
             self.control_ids = control_ids
         else:
@@ -50,6 +58,10 @@ class SyNBEATS:
         # cov_list_all = [TimeSeries.from_dataframe(self.dta[self.dta['id'] == cid], 'time', 'Y_obs').astype(np.float32) for cid in self.control_ids]
         cov_list_all = [TimeSeries.from_dataframe(self.dta[self.dta['id'] == cid], 'time', 'Y_obs') for cid in self.control_ids]
         cov_list_all = concatenate(cov_list_all, axis=1)
+        
+        cov_train_list = [TimeSeries.from_dataframe(self.dta[(self.dta['id'] == c_id) & (self.dta['time'] < self.target_time)],
+                                                'time', 'Y_obs') for c_id in self.control_ids]
+        cov_list_train = concatenate(cov_train_list, axis=1)
 
         ts_all_list = [TimeSeries.from_dataframe(self.dta[self.dta['id'] == treat_id], 'time', 'Y_obs') for treat_id in self.treat_ids]
         ts_list_all = concatenate(ts_all_list, axis=1)
@@ -69,6 +81,7 @@ class SyNBEATS:
         self.ts_list_test = ts_list_test
         self.ts_list_train = ts_list_train
         self.cov_list_all = cov_list_all
+        self.cov_list_train = cov_list_train
         
 
     def train(self, epochs=1500, lr=1e-4, batch_size=1024,
@@ -98,7 +111,7 @@ class SyNBEATS:
         the_model.fit(series=self.ts_list_train, past_covariates=self.cov_list_all, verbose=verbose) 
         
         self.model = the_model
-        backtest = self.model.historical_forecasts(series=self.ts_list_all, past_covariates=self.cov_list_all, retrain=False)
+        backtest = self.model.historical_forecasts(series=self.ts_list_train, past_covariates=self.cov_list_train, retrain=False)
         self.backtest = backtest
     
     def predictions(self, pred_length=-1, df=False, verbose=True):
@@ -111,21 +124,61 @@ class SyNBEATS:
             return darts_pred.pd_dataframe()
         return darts_pred
     
-    def plot_predictions(self, darts_pred, title="Prediction Plot", l_obs='Observed', l_pred='Predicted'):
+    def plot_predictions(self, darts_pred, predict_pretreatment=False, title=None, l_obs='Observed', l_pred='Predicted'):
+        plt.figure()
+        if not predict_pretreatment:
+            if len(self.treat_ids) == 1:
+                self.ts_list_train.append(darts_pred).plot(label=l_pred, color='blue')
+                self.ts_list_all.plot(label=l_obs)
+            else:
+                self.ts_list_all.mean(1).append(darts_pred.mean(1)).plot(label=l_pred, color='blue')
+                self.ts_list_all.mean(1).plot(label=l_obs)
 
-        if len(self.treat_ids) == 1:
-            darts_pred.plot(label=l_pred)
-            self.ts_list_all.plot(label=l_obs)
+            plt.axvline(x=self.target_time-self._step_size, color='gray', linestyle='--', label='Last Treated Time')
+            
+            if title:
+                plt.title(title)
+            else:
+                plt.title('Prediction Plot without Pre-Treatment Predictions')
+            plt.legend()
+            plt.savefig('predictions_without_pre.png')
+
+            plt.show()
         else:
-            darts_pred.mean(1).plot(label=l_pred)
-            self.ts_list_all.mean(1).plot(label=l_obs)
+            if len(self.treat_ids) == 1:
+                predicted = self.backtest.prepend(self.ts_list_all[0]).append(darts_pred)
+                
+                predicted_values = predicted.values()  # Extracting values
+                predicted_times = predicted.time_index  # Extracting time index
 
-        plt.axvline(x=self.target_time, color='gray', linestyle='--', label='Target Time')
+                plt.plot(predicted_times, predicted_values, label=l_pred, alpha=0.6, linewidth=2, color='b')
 
-        plt.title(title)
-        plt.legend()
-        # plt.savefig('predictions.png')
-        plt.show()
+                ts_all_values = self.ts_list_all.values()  # Extracting values
+                ts_all_times = self.ts_list_all.time_index  # Extracting time index
+
+                plt.plot(ts_all_times, ts_all_values, label=l_obs, alpha=0.4, linewidth=2, color='black')
+
+            else:
+                predicted = self.backtest.prepend(self.ts_list_all[0]).append(darts_pred).mean(1)
+                
+                predicted_values = predicted.values()  # Extracting values
+                predicted_times = predicted.time_index  # Extracting time index
+
+                plt.plot(predicted_times, predicted_values, label=l_pred, alpha=0.6, linewidth=2, color='b')
+
+                mean_ts_all_values = self.ts_list_all.mean(1).values()  # Extracting mean values
+                mean_ts_all_times = self.ts_list_all.mean(1).time_index  # Extracting time index of mean values
+
+                plt.plot(ts_all_times, ts_all_values, label=l_obs, alpha=0.4, linewidth=2, color='black')
+
+            plt.axvline(x=self.target_time-self._step_size, color='gray', linestyle='--', label='Last Treated Time')
+            if title:
+                plt.title(title)
+            else:
+                plt.title('Prediction Plot with Pre-Treatment Predictions')
+            plt.legend()
+            plt.savefig('predictions_with_pre.png')
+            plt.show()
 
     
     def backtest(self, df=False, retrain=True):
@@ -148,7 +201,7 @@ class SyNBEATS:
         plt.show()
         
     def _gap(self):
-        gap = self.ts_list_all - self.backtest.prepend(self.ts_list_all[0])
+        gap = self.ts_list_all - self.backtest.prepend(self.ts_list_all[0]).append(self.predictions(verbose=False))
         if len(self.treat_ids) == 1:
             return gap
         else:
@@ -162,7 +215,7 @@ class SyNBEATS:
         lim = max(abs(gap.values().flatten()))*1.05
         plt.ylim(-lim, lim)
         
-        plt.axvline(x=self.target_time, color='gray', linestyle='--', label='Target Time')
+        plt.axvline(x=self.target_time-self._step_size, color='gray', linestyle='--', label='Last Treated Time')
         
         plt.title(title)
         plt.legend()
@@ -212,22 +265,27 @@ class SyNBEATS:
             plt.figure()
             
             lim = 0
+            plotted = False
             for gap in gaps:
-                plt.plot(gap.time_index.tolist(), gap.values().squeeze(), color='gray', linewidth=0.5)
+                if not plotted:
+                    plt.plot(gap.time_index.tolist(), gap.values().squeeze(), color='gray', linewidth=0.5, label='Controls')
+                    plotted = True
+                else:
+                    plt.plot(gap.time_index.tolist(), gap.values().squeeze(), color='gray', linewidth=0.5)
                 lim = max(lim, max(abs(gap.values().squeeze()))*1.05)
 
             gap = self._gap()
-            plt.plot(gap.time_index.tolist(), gap.values().squeeze(), color='b', linewidth=2)
+            plt.plot(gap.time_index.tolist(), gap.values().squeeze(), color='b', linewidth=2, label='Treated')
 
             lim = max(lim, max(abs(gap.values().squeeze()))*1.05)
             plt.axhline(y=0, color='gray', linestyle='--')
             plt.ylim(-lim, lim)
 
-            plt.axvline(x=self.target_time, color='gray', linestyle='--', label='Target Time')
+            plt.axvline(x=self.target_time-self._step_size, color='gray', linestyle='--', label='Last Treated Time')
 
             plt.title('Placebo Effect Plot')
-            plt.legend(['Controls', 'Treated'])
-            # plt.savefig('placebo.png')
+            plt.legend()
+            plt.savefig('placebo.png')
             plt.show()
 
         
@@ -257,7 +315,7 @@ class SyNBEATS:
         plt.axhline(y=0, color='gray', linestyle='--')
         plt.ylim(-lim, lim)
 
-        plt.axvline(x=self.target_time, color='gray', linestyle='--', label='Target Time')
+        plt.axvline(x=self.target_time-self._step_size, color='gray', linestyle='--', label='Last Treated Time')
 
         plt.title('Placebo Effect Plot')
         plt.legend(['Controls', 'Treated'])
