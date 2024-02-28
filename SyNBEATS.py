@@ -131,7 +131,7 @@ class SyNBEATS:
                 self.ts_list_train.append(darts_pred).plot(label=l_pred, color='blue')
                 self.ts_list_all.plot(label=l_obs)
             else:
-                self.ts_list_all.mean(1).append(darts_pred.mean(1)).plot(label=l_pred, color='blue')
+                self.ts_list_train.append(darts_pred).mean(1).plot(label=l_pred, color='blue')
                 self.ts_list_all.mean(1).plot(label=l_obs)
 
             plt.axvline(x=self.target_time-self._step_size, color='gray', linestyle='--', label='Last Treated Time')
@@ -169,7 +169,7 @@ class SyNBEATS:
                 mean_ts_all_values = self.ts_list_all.mean(1).values()  # Extracting mean values
                 mean_ts_all_times = self.ts_list_all.mean(1).time_index  # Extracting time index of mean values
 
-                plt.plot(ts_all_times, ts_all_values, label=l_obs, alpha=0.4, linewidth=2, color='black')
+                plt.plot(mean_ts_all_times, mean_ts_all_values, label=l_obs, alpha=0.4, linewidth=2, color='black')
 
             plt.axvline(x=self.target_time-self._step_size, color='gray', linestyle='--', label='Last Treated Time')
             if title:
