@@ -4,14 +4,12 @@
 This repo includes a [Python implementation](./SyNBEATS.py) of the SyNBEATS algorithm presented in the paper: [Forecasting Algorithms for Causal Inference with Panel Data
 ](https://arxiv.org/abs/2208.03489). It also includes an [example usage notebook](./example_usage.ipynb) and the [dataset](./smoking_data.csv) used in it. The dataset originally comes from the paper [Adadie et al.](https://web.stanford.edu/~jhain/Paper/JASA2010.pdf)
 ## Installation
-Download the [SyNBEATS.py](./SyNBEATS.py) and the [requirements.txt](./requirements.txt) and put it inside your working directory. \
-Next run the following command to install the dependencies.
 ```bash
-pip install -r requirements.txt
+pip install git+https://github.com/Crabtain959/SyNBEATS.git
 ```
-Then add the following line to your script to import the code. 
+Or you can download this repo and run 
 ```python
-from synbeats import *
+pip install .
 ```
 
 
@@ -28,7 +26,7 @@ model = SyNBEATS(dta, [3], 1989)
 model.train(use_gpu=1)
 
 # Plot the predictions and the gap
-predictions = model.predictions()
+predictions = model.predict()
 model.plot_predictions(predictions)
 model.plot_gap()
 
