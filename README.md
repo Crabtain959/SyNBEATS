@@ -19,7 +19,7 @@ pip install .
 # Read the data into dta
 
 # Import the class
-from SyNBEATS import *
+from SyNBEATS import SyNBEATS
 
 # Build and train the model
 model = SyNBEATS(dta, [3], 1989)
