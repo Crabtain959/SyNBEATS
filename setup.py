@@ -6,7 +6,7 @@ with open('requirements.txt', 'r') as f:
 setup(
     name='SyNBEATS',
     version='1.0',
-    packages=find_packages('SyNBEATS'),
+    packages=find_packages('src'),
     package_dir={'': 'src'},
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
